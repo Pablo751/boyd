@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .container {
+        margin: 20px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    label, input, button {
+        display: block;
+        margin-bottom: 10px;
+    }
+    input, button {
+        width: 200px;
+    }
+    input[readonly] {
+        background-color: #f0f0f0;
+    }
+    .results input {
+        margin-bottom: 0;
+    }
+</style>
+
+    <title>Solar Electricity Production Calculator</title>
+</head>
+<body>
+    <h1>Solar Electricity Production Calculator</h1>
+
+    <!-- Input fields -->
+    <div>
+        <label for="panel-size">Insert Solar Panel Size in Watts (e.g., 3000 Watts):</label>
+        <input type="number" id="panel-size" value="3000">
+        <br>
+        <label for="sun-hours">Insert Average Peak Sun Hours (e.g., 5.11 Peak Sun Hours):</label>
+        <input type="number" id="sun-hours" step="0.01" value="5.1">
+        <br>
+        <button onclick="calculateProduction()">Calculate</button>
+    </div>
+
+    <!-- Results -->
+    <div>
+        <h2>Results</h2>
+    <!-- Updated Results section -->
+        <div class="results">
+            <input type="text" id="daily-production" readonly>
+            <input type="text" id="monthly-production" readonly>
+            <input type="text" id="yearly-production" readonly>
+        </div>
+    </div>
+
+    <script>
+        function calculateProduction() {
+            const panelSizeWatts = parseFloat(document.getElementById('panel-size').value);
+            const peakSunHours = parseFloat(document.getElementById('sun-hours').value);
+
+            const productionPerDay = (panelSizeWatts / 1000) * peakSunHours; // Convert watts to kW
+            const productionPerMonth = productionPerDay * 30; // Average month
+            const productionPerYear = productionPerDay * 365; // Year
+
+            // Update the result display to use input fields
+            document.getElementById('daily-production').value = productionPerDay.toFixed(2) + ' kWh/Day';
+            document.getElementById('monthly-production').value = productionPerMonth.toFixed(2) + ' kWh/Month';
+            document.getElementById('yearly-production').value = productionPerYear.toFixed(2) + ' kWh/Year';
+        }
+    </script>
+</body>
+</html>
