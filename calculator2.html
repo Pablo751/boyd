@@ -1,72 +1,256 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-    }
-    .container {
-        margin: 20px;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-    label, input, button {
-        display: block;
-        margin-bottom: 10px;
-    }
-    input, button {
-        width: 200px;
-    }
-    input[readonly] {
-        background-color: #f0f0f0;
-    }
-    .results input {
-        margin-bottom: 0;
-    }
-</style>
+    <title>Solar Roof Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
 
-    <title>Solar Electricity Production Calculator</title>
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .results {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .results p {
+            margin: 5px 0;
+        }
+
+        .column {
+            float: left;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        /* Style for the fixed column */
+        .column-fixed {
+            position: fixed; /* Make the column fixed */
+            top: 0; /* Stick it to the top of the viewport */
+            left: 0; /* Stick it to the left of the viewport */
+            width: 25%; /* Set the width as desired */
+            height: 100%; /* Make it take the full height of the viewport */
+            overflow-y: auto; /* Add vertical scroll if needed */
+            background-color: #f9f9f9; /* Background color */
+            border-right: 1px solid #ddd; /* Add a border for separation */
+            padding: 10px; /* Add some padding for spacing */
+        }
+
+        /* Adjust the content area to make space for the fixed column */
+        .container {
+            margin-left: 25%; /* Adjust left margin to accommodate the fixed column */
+        }
+        /* Clear the float to prevent overlapping */
+        .container::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    }
+    </style>
 </head>
 <body>
-    <h1>Solar Electricity Production Calculator</h1>
-
-    <!-- Input fields -->
-    <div>
-        <label for="panel-size">Insert Solar Panel Size in Watts (e.g., 3000 Watts):</label>
-        <input type="number" id="panel-size" value="3000">
+    <!-- Block 1: Solar Hours and Bill Offset -->
+<div class="container">
+    <div class="column-fixed ">
+        <h1>Solar Roof Calculator</h1>
+        <p>
+            This section calculates the solar array size based on your location, desired bill offset, and environmental factors. 
+            Select your location to determine the average solar hours per day. 
+            The bill offset percentage is how much of your electricity bill you want to cover with solar power. 
+            The environmental factor accounts for energy loss due to conditions like dust and weather.
+        </p>
+        <label for="location">Select Location:</label>
+        <select id="location">
+            <!-- Options will be added here -->
+        </select>
         <br>
-        <label for="sun-hours">Insert Average Peak Sun Hours (e.g., 5.11 Peak Sun Hours):</label>
-        <input type="number" id="sun-hours" step="0.01" value="5.1">
+        <label for="bill-offset">Bill Offset Percentage (%):</label>
+        <input type="number" id="bill-offset" min="0" max="100" value="90">
         <br>
-        <button onclick="calculateProduction()">Calculate</button>
+        <label for="environmental-factor">Environmental Factor (%):</label>
+        <input type="number" id="environmental-factor" min="0" max="100" value="85">
+        <br>
+        <label for="roof-area">Your Roof Area (m²):</label>
+        <input type="number" id="roof-area" min="0">
+        <br>
+        <button onclick="calculateSolar()">Calculate</button>
     </div>
 
     <!-- Results -->
     <div>
         <h2>Results</h2>
-    <!-- Updated Results section -->
-        <div class="results">
-            <input type="text" id="daily-production" readonly>
-            <input type="text" id="monthly-production" readonly>
-            <input type="text" id="yearly-production" readonly>
-        </div>
+        <p id="solar-hours-per-day"></p>
+        <p id="solar-array-size-kw"></p>
+        <p id="number-of-panels"></p>
+        <p id="required-area-m2"></p>
+        <p id="sufficient-space"></p>
     </div>
 
+        <!-- Block 2: Explanations -->
+    <div class="column">
+            <h2>Explanation of Calculations</h2>
+
+            <p>Location: Your geographic location influences the average solar hours per day your panels will receive. This is crucial for estimating the potential solar power generation.</p>
+
+            <p>Bill Offset Percentage (%): This is the percentage of your electricity bill that you want to cover with solar energy. If you wish to be entirely off-grid, you would set this to 100%. A lower percentage means relying partially on solar power and partially on the grid.</p>
+
+            <p>Environmental Factor (%): This factor accounts for potential energy losses due to environmental conditions, such as dust, humidity, or temperature variations. It's a way to adjust the theoretical output of your solar panels to more realistic values, considering these real-world influences.</p>
+
+            <h3>Calculations</h3>
+            <bold>Solar Array Output:</bold>
+            <p>Solar Array Output = Electricity Consumption / 365*Solar Hours in a Day</p>
+             
+            <p>The solar array output is calculated based on your yearly electricity consumption and the average solar hours per day specific to your location.</p>
+
+            <bold>Solar Array Size:</bold>
+            <p>Solar Array Size = Solar Array Output * (Bill Offset Percentage/Environmental Factor)</p>
+
+            <p>This calculation adjusts the solar array output to account for how much of your electricity bill you want to offset and the environmental factor that affects solar panel efficiency.</p>
+
+            <h4>Estimated Required Roof Area</h4>
+            <bold>Explanation:</bold>
+
+            <p>After determining the solar array size, the next step is to assess whether your roof can accommodate the required number of solar panels. This section calculates the number of panels you'll need and the total roof area they will occupy.</p>
+
+            <bold>Calculation:</bold>
+
+            <bold>Number of Panels Needed:</bold>
+            <p>Required Panels = Solar Array Size in kW * 1000/Panel Output in Watts</p>
+             
+            <p>This calculation divides the total required solar array size (in watts) by the output of an individual solar panel to determine how many panels are needed.</p>
+
+            <bold>Required Area:</bold>
+            <p>Area Occupied = Required Panels * Panel Size</p>
+            The area each panel will occupy is multiplied by the number of required panels to give the total roof area needed for the installation.</p>
+
+            <p>The results indicate whether your current roof area is sufficient to install the required number of solar panels based on your energy needs, location, and environmental considerations.</p>
+        </div>
+    </div>
+    <!-- JavaScript -->
     <script>
-        function calculateProduction() {
-            const panelSizeWatts = parseFloat(document.getElementById('panel-size').value);
-            const peakSunHours = parseFloat(document.getElementById('sun-hours').value);
+        // Example location data (this should be replaced with actual data)
+        const locations = {
+            "Birmingham": 1501,
+            "Bristol": 1485,
+            "Dover": 1770,
+            "Isles of Scilly": 1708,
+            "London, Greenwich": 1526,
+            "London, Kew Gardens": 1693,
+            "Norwich": 1611,
+            "Nottingham": 1487,
+            "Plymouth": 1732,
+            "Southampton": 1706,
+            "Stoke-on-Trent": 1485,
+            "Weymouth": 1904,
+            "Ambleside, Windermere Lake": 1225,
+            "Berwick-upon-Tweed": 1535,
+            "Dumfries": 1309,
+            "Hull": 1559,
+            "Manchester": 1385,
+            "Middlesbrough": 1395,
+            "Newcastle upon Tyne": 1337,
+            "Prestwick": 1401,
+            "Sheffield": 1485,
+            "Cardiff": 1573,
+            "Llandrindod Wells": 1279,
+            "Aberdeen": 1447,
+            "Dundee": 1461,
+            "Edinburgh": 1449,
+            "Glasgow": 1280,
+            "Inverness": 1250,
+            "Kirkwall, Orkney Islands": 1210,
+            "Lerwick, Shetland Islands": 1158,
+            "Stornoway, Outer Hebrides": 1256,
+            "Tiree, Inner Hebrides": 1524,
+            "Armagh": 1279,
+            "Belfast": 1277,
+            "Londonderry": 1359
 
-            const productionPerDay = (panelSizeWatts / 1000) * peakSunHours; // Convert watts to kW
-            const productionPerMonth = productionPerDay * 30; // Average month
-            const productionPerYear = productionPerDay * 365; // Year
+        };
 
-            // Update the result display to use input fields
-            document.getElementById('daily-production').value = productionPerDay.toFixed(2) + ' kWh/Day';
-            document.getElementById('monthly-production').value = productionPerMonth.toFixed(2) + ' kWh/Month';
-            document.getElementById('yearly-production').value = productionPerYear.toFixed(2) + ' kWh/Year';
+        window.onload = function() {
+            populateLocations();
+        };
+
+        function populateLocations() {
+            const locationSelect = document.getElementById('location');
+            for (const place in locations) {
+                let option = document.createElement('option');
+                option.value = place;
+                option.text = place;
+                locationSelect.appendChild(option);
+            }
+        }
+
+        function calculateSolarHoursPerDay(hoursPerYear) {
+            return hoursPerYear / 365;
+        }
+
+        function calculateSolar() {
+            const location = document.getElementById('location').value;
+            const billOffset = parseFloat(document.getElementById('bill-offset').value) / 100;
+            const environmentalFactor = parseFloat(document.getElementById('environmental-factor').value) / 100;
+            const userRoofArea = parseFloat(document.getElementById('roof-area').value);
+
+            const solarHoursPerDay = calculateSolarHoursPerDay(locations[location]);
+            const solarArrayOutput = 5000 / (365 * solarHoursPerDay); // Example electricity consumption
+            const solarArraySizeKW = solarArrayOutput * (billOffset / environmentalFactor);
+            const panelOutputWatts = 300;
+            const panelSizeM2 = 1.4;
+            const numberOfPanels = (solarArraySizeKW * 1000) / panelOutputWatts;
+            const requiredAreaM2 = numberOfPanels * panelSizeM2;
+            const sufficientSpace = userRoofArea >= requiredAreaM2;
+
+            document.getElementById('solar-hours-per-day').innerText = 'Solar Hours per Day: ' + solarHoursPerDay.toFixed(2);
+            document.getElementById('solar-array-size-kw').innerText = 'Solar Array Size (kW): ' + solarArraySizeKW.toFixed(2);
+            document.getElementById('number-of-panels').innerText = 'Number of Panels Needed: ' + Math.ceil(numberOfPanels);
+            document.getElementById('required-area-m2').innerText = 'Required Area (m²): ' + requiredAreaM2.toFixed(2);
+            document.getElementById('sufficient-space').innerText = sufficientSpace ? 'You have the necessary space.' : 'You do not have the necessary space.';
         }
     </script>
 </body>
+
 </html>
