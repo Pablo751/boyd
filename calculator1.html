@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Solar Calculator</title>
+    <style>
+        .solar-calculator {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .solar-calculator form {
+            margin: 0;
+            padding: 0;
+        }
+
+        .solar-calculator label, .solar-calculator input {
+            display: block;
+            width: calc(100% - 20px); /* Adjust width to account for padding */
+            margin-bottom: 10px;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        .solar-calculator input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .solar-calculator button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+        }
+
+        .solar-calculator button:hover {
+            background-color: #45a049;
+        }
+
+        .solar-map {
+            width: 100%;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .instructions {
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="solar-calculator">
+    <form id="solarForm">
+        <label for="kwhYear">Your kWh used per year:</label>
+        <input type="number" id="kwhYear" name="kwhYear" value="0"><br>
+
+        <label for="solarHours">Solar Hours per Day (refer to the map below):</label>
+        <input type="number" id="solarHours" name="solarHours" value="0"><br>
+
+        <label for="percentOffset">% of Electricity Bill to Offset:</label>
+        <input type="number" id="percentOffset" name="percentOffset" value="0"><br>
+
+        <button type="button" onclick="calculateSolarSize()">Calculate</button>
+    </form>
+    <p class="result">Solar Array Size Estimate: <span id="solarSizeEstimate">0</span> kW</p>
+
+    <div class="instructions">
+        Refer to the map below to estimate the average daily solar hours for your location.
+    </div>
+    <img src="/Images/solarmap.png" alt="Solar Map of UK" class="solar-map">
+</div>
+
+<script>
+    function calculateSolarSize() {
+        var kwhYear = document.getElementById("kwhYear").value;
+        var solarHours = document.getElementById("solarHours").value;
+        var percentOffset = document.getElementById("percentOffset").value;
+
+        var solarSize = ((kwhYear / 365 / solarHours) * (percentOffset * 0.01)) / 0.75;
+        solarSize = Math.round(solarSize * 100) / 100; // Round to 2 decimal places
+
+        document.getElementById("solarSizeEstimate").innerText = solarSize;
+    }
+</script>
+
+</body>
+</html>
